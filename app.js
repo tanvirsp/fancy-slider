@@ -6,12 +6,26 @@ const sliderBtn = document.getElementById('create-slider');
 const sliderContainer = document.getElementById('sliders');
 
 
+//press Enter to start Search 
+document.getElementById('search').addEventListener("keypress", function(event){
+  if (event.key === 'Enter') {
+      document.getElementById("search-btn").click();
+     }
+})
+
+
+
 // If this key doesn't work
 // Find the name in the url and go to their website
 // to create your own api key
 const KEY = '15674931-a9d714b6e9d654524df198e00&q';
 
+
+
 const getImages = (query) => {
+  //Show Spniner
+  toggleSpinner()
+
   fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
     .then(data =>{
@@ -19,6 +33,8 @@ const getImages = (query) => {
       
     })
     .catch(err => console.log(err)) 
+    
+  
 }
 
 
@@ -36,6 +52,9 @@ const showImages = (images) => {
     div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
     gallery.appendChild(div)
   })
+
+  //Hide Spniner
+  toggleSpinner()
 
 }
 
@@ -78,6 +97,12 @@ const createSlider = () => {
     alert('Select at least 2 image.')
     return;
   }
+
+  const duration = document.getElementById('duration').value || 1000;
+  if (duration < 999){
+    alert("Minimum Duration will be 1000ms")
+    return; 
+  }
   // crate slider previous next area
   sliderContainer.innerHTML = '';
   const prevNext = document.createElement('div');
@@ -93,11 +118,6 @@ const createSlider = () => {
   imagesArea.style.display = 'none';
 
    
-  
-  const duration = document.getElementById('duration').value || 1000;
-
- 
-
   sliders.forEach(slide => {
     let item = document.createElement('div')
     item.className = "slider-item";
@@ -107,10 +127,11 @@ const createSlider = () => {
     sliderContainer.appendChild(item)
   })
   changeSlide(0)
-  timer = setInterval(function () {
-    slideIndex++;
-    changeSlide(slideIndex);
-  }, duration);
+   timer = setInterval(function () {
+      slideIndex++;
+      changeSlide(slideIndex);
+    }, duration);
+   
 
 }
 
@@ -151,3 +172,11 @@ searchBtn.addEventListener('click', function () {
 sliderBtn.addEventListener('click', function () {
   createSlider()
 })
+
+
+//Toggle Spinner
+function toggleSpinner(){
+  const spinner =  document.getElementById("spinner");
+  spinner.classList.toggle("d-none");
+
+}
